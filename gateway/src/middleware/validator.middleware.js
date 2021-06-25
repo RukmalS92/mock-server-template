@@ -6,10 +6,9 @@ const validateInfo = async (req, res, next) => {
         if(req.body === undefined){
             throw new Error('No body found');
         }
-        const username = req.body.username;
         const email = req.body.email;
         const password = req.body.password;
-        if((username === undefined) || (email === undefined) || (password === undefined)){
+        if((email === undefined) || (password === undefined)){
             throw new Error('Body does contain eiter username email password');
         }
     
@@ -20,7 +19,7 @@ const validateInfo = async (req, res, next) => {
         next()
     } catch (error) {
         console.log(chalk.red(error.message));
-        return res.status(400).send(error.message)
+        return res.send({status : "fail", message : error.message})
     }
 }
 

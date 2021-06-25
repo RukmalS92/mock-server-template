@@ -3,30 +3,24 @@ const { generateAuthToken, varifyAuthToken, generateEncryptedPassword, compareEn
 const chalk = require('chalk')
 
 const signUp = async (req, res) => {
-
     try {
-        req.body.password = await generateEncryptedPassword(req.body.password)
-    } catch (error) {
-        console.log(chalk.red(error.message))
-        return res.status(500).send('Fatal error : password encryption error')
-    }
-  
-    const username = req.body.username;
-    const email = req.body.email;
-    const password = req.body.password;
-
-    try {
-        let user = await User.findOne({email : email});
-        if(user !== null){
-            throw new Error(`User already present with this username is ${user.username}`)
+        try {
+            req.body.password = await generateEncryptedPassword(req.body.password)
+        } catch (error) {
+            console.log(chalk.red(error.message))
+            throw new Error('Fatal error : password encryption error')
         }
-    } catch (error) {
-        console.log(chalk.red(error.message))
-        return res.status(500).send(error.message)
-    }
 
-    try {
-        
+        const username = req.body.username;
+        const email = req.body.email;
+        const password = req.body.password;
+
+        // let existingUser = await User.findOne({email : email});
+        // if(existingUser !== null){
+        //     throw new Error(`User already present with this username is ${existingUser.username}`)
+        // }
+            
+        let token = await generateAuthToken({email, password});
         let user = await User.create({
             username,
             email,
@@ -35,13 +29,17 @@ const signUp = async (req, res) => {
         if(user === null){
             throw new Error('User creation faliure')
         }
-        let token = await generateAuthToken({email, password});
-        res.cookie('token', token);
+        // res.setHeader('Autherization', token);
         console.log(chalk.green(`new user created with following info :  ${user}`))
-        return res.send({status : "success", user})
+        return res.send({
+            username,
+            email,
+            token,
+            status : "success"
+        })
     } catch (error) {
         console.log(chalk.red(error.message))
-        return res.status(500).send(error.message)
+        return res.send({status : "fail", message : error.message})
     }
 }
 
@@ -60,11 +58,15 @@ const signIn = async (req, res) => {
             throw new Error('Please enter correct password')
         }
         let token = await generateAuthToken({email, password})
-        res.cookie('token', token)
-        return res.send({status : "success", user})
+        return res.send({
+            username,
+            email,
+            token,
+            status : "success"
+        })
     } catch (error) {
         console.log(chalk.red(error.message));
-        return res.status(500).send(error.message)
+        return res.status(500).send({status : "fail", message : error.message})
     }
 }
 

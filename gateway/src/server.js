@@ -1,4 +1,5 @@
 const express = require('express')
+const cors = require('cors')
 
 const port = process.env.PORT 
 
@@ -9,6 +10,8 @@ require('./connection')
 const indexRouter = require('./routes/index.route');
 const authRouter = require('./routes/auth.route');
 const realTimeRouter = require('./routes/realtime.route');
+
+app.use(cors())
 
 app.use(express.json());
 

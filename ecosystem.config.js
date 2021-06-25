@@ -6,7 +6,9 @@ module.exports = {
       watch : true,
       env_development : {
         PORT : 3000,
-        NODE_ENV : 'development'
+        NODE_ENV : 'development',
+        BCRYPT_SALT_ROUNDS : 10,
+        JWT_KEY : "all are humans"
       },
       env_production : {
         PORT : 4000,

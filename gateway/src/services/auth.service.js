@@ -2,7 +2,9 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken')
 
 const saltrounds = parseInt(process.env.BCRYPT_SALT_ROUNDS);
-const encodingKey = process.env.JWT_KEY;
+const encodingKey = process.env.JWT_KEY
+
+console.log(saltrounds)
 
 const generateEncryptedPassword = async (pwd) => {
    return await bcrypt.hash(pwd, saltrounds);
